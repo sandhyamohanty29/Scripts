@@ -1,0 +1,66 @@
+1. In our initial setup; we used to append below lines in /etc/profile
+
+echo -e '#[Record terminal sessions]
+if [ "x$SESSION_RECORD" = "x" ]
+then
+        timestamp=`date "+%m%d%Y%H%M"`
+        output=/var/log/session/session.$USER.$$.$timestamp.log
+        SESSION_RECORD=started
+        export SESSION_RECORD
+        script -t -f -q 2>${output}.timing $output
+
+
+But in this case, when datadog_session.sh script runs it will create a script automatically  inside /etc/profile.d it is called 
+users_session.sh. it has all the below output
+
+
+echo -e '#[Record terminal sessions]
+if [ "x$SESSION_RECORD" = "x" ]
+then
+        timestamp=`date "+%m%d%Y%H%M"`
+        output=/var/log/session/session.$USER.$$.$timestamp.log
+        SESSION_RECORD=started
+        export SESSION_RECORD
+        script -t -f -q 2>${output}.timing $output
+
+
+2. Once this is done, it will start to capture your login session of all user with time stamp
+
+3. then it will configure datadog agent ...It will use your api key. your api key has been mentioned inside datadog_session.sh script
+
+4. Once data agent installed, it will enable "logs_enabled=true" inside /etc/datadog-agent/datadog.yaml
+
+5. Then it will restart datadog-agent.
+
+6. Then it will create conf.yaml inside /etc/datadog-agent/conf.d/session.d. which you will be using to customize
+to view  your session log in datadog
+
+7. Then it will  again restart datadog-agent.
+
+THE MAIN PLUS POINT HERE IS datadog_session.sh is a sinle script which will take care of all above task, and you dont have to worry anything .
+
+just you need to do below thing
+
+#vi datadog_session.sh
+
+paste the content
+
+chmod 777 datadog_session.sh
+
+and run datadog_session.sh like below
+
+./datadog_session.sh
+
+thats it.
+
+
+
+
+
+
+
+
+
+
+
+
